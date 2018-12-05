@@ -36,6 +36,14 @@ public class Account implements Serializable {
         this.balance = balance;
     }
 
+    public ReentrantLock getLock() {
+        return lock;
+    }
+
+    public void setLock(ReentrantLock lock) {
+        this.lock = lock;
+    }
+
     @Override
     public String toString() {
         return "Account{" +

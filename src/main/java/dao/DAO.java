@@ -3,12 +3,13 @@ package dao;
 import accounts.Account;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class DAO implements IDataAccessObject {
-    private final String path = "src\\main\\resources\\";
-    public static final String PATH_PREFIX = "account";
+    private final String path = "src/main/resources/";
+    private final String PATH_PREFIX = "account";
 
     public Account get(String accountName) {
         try {
@@ -44,13 +45,33 @@ public class DAO implements IDataAccessObject {
 
     }
 
+    public List<String> getAccountNames() {
+        File folder = new File(path);
+        List<String> accountNames = new ArrayList<String>();
+
+        if (folder.isDirectory()) {
+            if (null != folder.list()) {
+                accountNames.addAll(Arrays.asList(folder.list()));
+            }
+        }
+        return accountNames;
+    }
+
+    public List<Account> getAccounts() {
+        List<Account> accounts = new ArrayList<Account>();
+        for(String accountName : getAccountNames()) {
+            accounts.add(get(accountName));
+        }
+        return accounts;
+    }
+
     public void deleteAll() {
-        File file = new File(path);
-        if (file.isDirectory()) {
-            if (null != file.list()) {
-                List<String> files = Arrays.asList(file.list());
-                for (String file1 : files) {
-                    File myFile = new File(file, file1);
+        File folder = new File(path);
+        if (folder.isDirectory()) {
+            if (null != folder.list()) {
+                List<String> files = Arrays.asList(folder.list());
+                for (String file : files) {
+                    File myFile = new File(folder, file);
                     myFile.delete();
                 }
             }

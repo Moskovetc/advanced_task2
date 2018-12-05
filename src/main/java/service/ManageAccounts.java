@@ -8,24 +8,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ManageAccounts {
-    private List<Account> accounts;
-    DAO dao = new DAO();
-    GenerateRandom generateRandom = new GenerateRandom();
+    private DAO dao = new DAO();
+    private final int MAX_ACCOUNTS = 10;
+    private final int MAX_THREADS = 20;
 
-    private void doTransactions() {
-        for (int i = 0; i < 3; i++){
-            Thread producerThread = new Thread(new MoneyTransfer(accounts));
-            producerThread.start();
-        }
-    }
-
-    private List<Account> createAccounts() {
+    private void createAccounts() {
+        List<Account> accounts;
+        GenerateRandom generateRandom = new GenerateRandom();
         accounts = new ArrayList<Account>();
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < MAX_ACCOUNTS; i++) {
             accounts.add(generateRandom.getAccount());
             dao.set(accounts.get(i));
         }
-        return accounts;
     }
 
     private void deleteAccounts() {
@@ -35,6 +29,9 @@ public class ManageAccounts {
     public void start() {
         deleteAccounts();
         createAccounts();
-        doTransactions();
+        for (int i = 0; i < MAX_THREADS; i++) {
+            Thread thread = new Thread(new MoneyTransfer(dao.getAccounts()));
+            thread.start();
+        }
     }
 }
