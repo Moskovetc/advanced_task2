@@ -6,6 +6,8 @@ import utilities.GenerateRandom;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ManageAccounts {
     private DAO dao = new DAO();
@@ -29,9 +31,10 @@ public class ManageAccounts {
     public void start() {
         deleteAccounts();
         createAccounts();
+        ExecutorService service = Executors.newFixedThreadPool(20);
         for (int i = 0; i < MAX_THREADS; i++) {
-            Thread thread = new Thread(new MoneyTransfer(dao.getAccounts()));
-            thread.start();
+            service.submit(new MoneyTransfer(dao.getAccounts()));
         }
+        service.shutdown();
     }
 }

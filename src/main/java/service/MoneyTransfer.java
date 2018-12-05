@@ -47,8 +47,9 @@ public class MoneyTransfer implements Runnable {
             } else try {
                 throw new NotEnoughBalanceException();
             } catch (NotEnoughBalanceException e) {
-                System.err.println(String.format("%s Account ID: %s Name: %s not enough sum %s",
-                        Thread.currentThread().getName(), fromAccount.getId(), fromAccount.getAccountName(), sum));
+                System.err.println(String.format("%s Account ID: %s Name: %s not enough sum trunsaction %s have sum %s",
+                        Thread.currentThread().getName(), fromAccount.getId(), fromAccount.getAccountName(), sum,
+                        fromAccount.getBalance()));
             }
         }
         return result;
