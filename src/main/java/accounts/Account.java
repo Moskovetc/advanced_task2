@@ -1,20 +1,16 @@
 package accounts;
 
 import java.io.Serializable;
-<<<<<<< HEAD
-=======
 import java.util.concurrent.locks.ReentrantLock;
->>>>>>> initial
+
 
 public class Account implements Serializable {
     private static final long serialVersionUID = 1L;
     private String accountName;
     private Long id;
     private Long balance;
-<<<<<<< HEAD
-=======
     private ReentrantLock lock = new ReentrantLock();
->>>>>>> initial
+
 
     public String getAccountName() {
         return accountName;
