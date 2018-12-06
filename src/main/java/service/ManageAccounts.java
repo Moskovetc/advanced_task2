@@ -14,9 +14,9 @@ import java.util.concurrent.Executors;
 
 public class ManageAccounts {
     private IDataAccessObject dao = new DAO();
-    private final int MAX_ACCOUNTS = 10;
-    private final int MAX_THREADS = 20;
-    private final Logger logger = LoggerFactory.getLogger(ManageAccounts.class);
+    private static final int MAX_ACCOUNTS = 10;
+    private static final int MAX_THREADS = 20;
+    private static final Logger logger = LoggerFactory.getLogger(ManageAccounts.class);
 
     private void createAccounts() {
         List<Account> accounts;
@@ -39,7 +39,6 @@ public class ManageAccounts {
         createAccounts();
         ExecutorService service = Executors.newFixedThreadPool(20);
         for (int i = 1; i < MAX_THREADS; i++) {
-            logger.info(String.format("Started method start, thread %s started", i));
             service.submit(new MoneyTransfer(dao.getAccounts()));
         }
         service.shutdown();

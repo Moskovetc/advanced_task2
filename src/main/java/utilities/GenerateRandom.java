@@ -9,12 +9,12 @@ import java.util.List;
 import java.util.Random;
 
 public class GenerateRandom {
-    private List<String> accountNameList = Arrays.asList("Vasya", "Kolya", "Vova", "Nikita", "Dima", "Mike", "Michel",
+    private static final List<String> accountNameList = Arrays.asList("Vasya", "Kolya", "Vova", "Nikita", "Dima", "Mike", "Michel",
             "John", "Arnold", "Putin", "Valera", "Azat");
-    private final Long MAX_ID = 10000L;
-    private final Long MAX_BALANCE = 10000000L;
-    Random random = new Random();
-    private final Logger logger = LoggerFactory.getLogger(GenerateRandom.class);
+    private static final Long MAX_ID = 10000L;
+    private static final Long MAX_BALANCE = 10000000L;
+    private Random random = new Random();
+    private static final Logger logger = LoggerFactory.getLogger(GenerateRandom.class);
 
     public Account getAccount() {
         Account account = new Account();
