@@ -38,7 +38,7 @@ public class ManageAccounts {
         deleteAccounts();
         createAccounts();
         ExecutorService service = Executors.newFixedThreadPool(20);
-        for (int i = 0; i < MAX_THREADS; i++) {
+        for (int i = 1; i < MAX_THREADS; i++) {
             logger.info(String.format("Started method start, thread %s started", i));
             service.submit(new MoneyTransfer(dao.getAccounts()));
         }
