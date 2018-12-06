@@ -29,7 +29,11 @@ public class MoneyTransfer implements Runnable {
         Account fromAccount = accounts.get(random.nextInt(accounts.size()));
         Account toAccount = accounts.get(random.nextInt(accounts.size()));
         if (checkAccountData(fromAccount, toAccount, sum)) {
-            transaction(fromAccount, toAccount, sum);
+            Transaction transaction = new Transaction(fromAccount, toAccount, sum, quantityTransactions);
+            boolean transactionComplete = false;
+            while (!transactionComplete) {
+                transactionComplete = transaction.complete();
+            }
         }
     }
 
@@ -57,57 +61,57 @@ public class MoneyTransfer implements Runnable {
         return result;
     }
 
-    private void transaction(Account fromAccount, Account toAccount, Long sum) {
-        boolean notSucsessfull = true;
-        while (notSucsessfull) {
-            if (fromAccount.getId() < toAccount.getId()) {
-                if (fromAccount.getLock().tryLock()) {
-                    try {
-                        if (toAccount.getLock().tryLock()) {
-                            try {
-                                if (quantityTransactions.get() < ManageAccounts.MAX_TRANSACTIONS) {
-                                    transfer(fromAccount, toAccount, sum);
-                                    notSucsessfull = false;
-                                } else {
-                                    notSucsessfull = false;
-                                }
-                                quantityTransactions.incrementAndGet();
-                            } finally {
-                                toAccount.getLock().unlock();
-                            }
-                        }
-                    } finally {
-                        fromAccount.getLock().unlock();
-                    }
-                }
-            } else {
-                if (toAccount.getLock().tryLock()) {
-                    try {
-                        if (fromAccount.getLock().tryLock()) {
-                            try {
-                                if (quantityTransactions.get() < ManageAccounts.MAX_TRANSACTIONS) {
-                                    transfer(fromAccount, toAccount, sum);
-                                    notSucsessfull = false;
-                                } else {
-                                    notSucsessfull = false;
-                                }
-                                quantityTransactions.incrementAndGet();
-                            } finally {
-                                toAccount.getLock().unlock();
-                            }
-                        }
-                    } finally {
-                        fromAccount.getLock().unlock();
-                    }
-                }
-            }
-        }
-        logger.info(String.format("Transaction complete with params: fromAccount %s toAccount %s sum %s",
-                fromAccount, toAccount, sum));
-    }
+//    private void transaction(Account fromAccount, Account toAccount, Long sum) {
+//        boolean notSucsessfull = true;
+//        while (notSucsessfull) {
+//            if (fromAccount.getId() < toAccount.getId()) {
+//                if (fromAccount.getLock().tryLock()) {
+//                    try {
+//                        if (toAccount.getLock().tryLock()) {
+//                            try {
+//                                if (quantityTransactions.get() < ManageAccounts.MAX_TRANSACTIONS) {
+//                                    transfer(fromAccount, toAccount, sum);
+//                                    notSucsessfull = false;
+//                                } else {
+//                                    notSucsessfull = false;
+//                                }
+//                                quantityTransactions.incrementAndGet();
+//                            } finally {
+//                                toAccount.getLock().unlock();
+//                            }
+//                        }
+//                    } finally {
+//                        fromAccount.getLock().unlock();
+//                    }
+//                }
+//            } else {
+//                if (toAccount.getLock().tryLock()) {
+//                    try {
+//                        if (fromAccount.getLock().tryLock()) {
+//                            try {
+//                                if (quantityTransactions.get() < ManageAccounts.MAX_TRANSACTIONS) {
+//                                    transfer(fromAccount, toAccount, sum);
+//                                    notSucsessfull = false;
+//                                } else {
+//                                    notSucsessfull = false;
+//                                }
+//                                quantityTransactions.incrementAndGet();
+//                            } finally {
+//                                toAccount.getLock().unlock();
+//                            }
+//                        }
+//                    } finally {
+//                        fromAccount.getLock().unlock();
+//                    }
+//                }
+//            }
+//        }
+//        logger.info(String.format("Transaction complete with params: fromAccount %s toAccount %s sum %s",
+//                fromAccount, toAccount, sum));
+//    }
 
-    private void transfer(Account fromAccount, Account toAccount, Long sum) {
-        fromAccount.setBalance(fromAccount.getBalance() - sum);
-        toAccount.setBalance(toAccount.getBalance() + sum);
-    }
+//    private void transfer(Account fromAccount, Account toAccount, Long sum) {
+//        fromAccount.setBalance(fromAccount.getBalance() - sum);
+//        toAccount.setBalance(toAccount.getBalance() + sum);
+//    }
 }

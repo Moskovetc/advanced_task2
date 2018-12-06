@@ -18,7 +18,7 @@ public class ManageAccounts {
     private final int MAX_ACCOUNTS = 10;
     private final int MAX_THREADS = 20;
     public final static int MAX_TRANSACTIONS = 1000;
-    private static AtomicInteger quantityTransactions = new AtomicInteger(1);
+    private static AtomicInteger quantityTransactions = new AtomicInteger(0);
     private final Logger logger = LoggerFactory.getLogger(ManageAccounts.class);
 
     private void createAccounts() {
