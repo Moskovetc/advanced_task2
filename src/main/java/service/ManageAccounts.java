@@ -17,10 +17,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ManageAccounts {
     private IDataAccessObject dao = new DAO();
-    private final int MAX_ACCOUNTS = 10;
-    private final int MAX_THREADS = 20;
-    public final static int MAX_TRANSACTIONS = 1000;
-    private AtomicInteger quantityTransactions = new AtomicInteger(0);
+    private static final int MAX_ACCOUNTS = 10;
+    private static final int MAX_THREADS = 20;
+    public static final int MAX_TRANSACTIONS = 1000;
+//    private AtomicInteger quantityTransactions = new AtomicInteger(0);
     private static final Logger logger = LoggerFactory.getLogger(ManageAccounts.class);
 
     private void createAccounts() {
@@ -45,8 +45,8 @@ public class ManageAccounts {
         createAccounts();
         ExecutorService service = Executors.newFixedThreadPool(MAX_THREADS);
         transactionsStartAt = LocalDateTime.now();
-        while (MAX_TRANSACTIONS > quantityTransactions.get()) {
-            service.submit(new MoneyTransfer(dao.getAccounts(), quantityTransactions));
+        for (int i = 1; i < MAX_THREADS; i++) {
+            service.submit(new MoneyTransfer(dao.getAccounts()));
         }
         service.shutdown();
         logger.info(String.format("Transactions per second %s",

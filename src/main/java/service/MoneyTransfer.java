@@ -12,27 +12,28 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MoneyTransfer implements Runnable {
-    private AtomicInteger quantityTransactions;
-    private final Long MAX_SUM = 10000000L;
+    private static final Long MAX_SUM = 10000000L;
     private GenerateRandom generateRandom = new GenerateRandom();
     private List<Account> accounts;
+    private static final int MAX_TRANSACTIONS = 1000;
+    private AtomicInteger quantityTransactions = new AtomicInteger(0);
     private static final Logger logger = LoggerFactory.getLogger(MoneyTransfer.class);
 
-    public MoneyTransfer(List<Account> accounts, AtomicInteger quantityTransactions) {
+    public MoneyTransfer(List<Account> accounts) {
         this.accounts = accounts;
-        this.quantityTransactions = quantityTransactions;
     }
 
     public void run() {
-        Random random = new Random();
-        Long sum = generateRandom.getSum(MAX_SUM);
-        Account fromAccount = accounts.get(random.nextInt(accounts.size()));
-        Account toAccount = accounts.get(random.nextInt(accounts.size()));
-        if (checkAccountData(fromAccount, toAccount, sum)) {
-            Transaction transaction = new Transaction(fromAccount, toAccount, sum, quantityTransactions);
-            boolean transactionComplete = false;
-            while (!transactionComplete) {
-                transactionComplete = transaction.complete();
+        while (MAX_TRANSACTIONS > quantityTransactions.get()) {
+            Random random = new Random();
+            Long sum = generateRandom.getSum(MAX_SUM);
+            Account fromAccount = accounts.get(random.nextInt(accounts.size()));
+            Account toAccount = accounts.get(random.nextInt(accounts.size()));
+            if (checkAccountData(fromAccount, toAccount, sum)) {
+                boolean transactionComplete = false;
+                while (!transactionComplete) {
+                    transactionComplete = new Transaction(fromAccount, toAccount, sum, quantityTransactions).complete();
+                }
             }
         }
     }
