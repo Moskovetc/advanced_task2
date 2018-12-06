@@ -11,11 +11,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ManageAccounts {
     private IDataAccessObject dao = new DAO();
     private final int MAX_ACCOUNTS = 10;
     private final int MAX_THREADS = 20;
+    public final static int MAX_TRANSACTIONS = 1000;
+    private static AtomicInteger quantityTransactions = new AtomicInteger(1);
     private final Logger logger = LoggerFactory.getLogger(ManageAccounts.class);
 
     private void createAccounts() {
@@ -37,10 +40,9 @@ public class ManageAccounts {
     public void start() {
         deleteAccounts();
         createAccounts();
-        ExecutorService service = Executors.newFixedThreadPool(20);
-        for (int i = 1; i < MAX_THREADS; i++) {
-            logger.info(String.format("Started method start, thread %s started", i));
-            service.submit(new MoneyTransfer(dao.getAccounts()));
+        ExecutorService service = Executors.newFixedThreadPool(MAX_THREADS);
+        while (MAX_TRANSACTIONS > quantityTransactions.get()) {
+            service.submit(new MoneyTransfer(dao.getAccounts(), quantityTransactions));
         }
         service.shutdown();
     }

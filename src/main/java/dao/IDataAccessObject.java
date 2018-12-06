@@ -9,9 +9,9 @@ public interface IDataAccessObject {
 
     void set(Account account);
 
-    List getAccountNames();
+    List<String> getAccountNames();
 
-    List getAccounts();
+    List<Account> getAccounts();
 
     void deleteAll();
 }

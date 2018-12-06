@@ -12,26 +12,24 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MoneyTransfer implements Runnable {
-    private static AtomicInteger quantityTransactions = new AtomicInteger(0);
-    private final int MAX_TRANSACTIONS = 1000;
+    private static AtomicInteger quantityTransactions;
     private final Long MAX_SUM = 10000000L;
     private GenerateRandom generateRandom = new GenerateRandom();
     private List<Account> accounts;
     private final Logger logger = LoggerFactory.getLogger(MoneyTransfer.class);
 
-    public MoneyTransfer(List<Account> accounts) {
+    public MoneyTransfer(List<Account> accounts, AtomicInteger quantityTransactions) {
         this.accounts = accounts;
+        MoneyTransfer.quantityTransactions = quantityTransactions;
     }
 
     public void run() {
-        while (MAX_TRANSACTIONS > quantityTransactions.get()) {
-            Random random = new Random();
-            Long sum = generateRandom.getSum(MAX_SUM);
-            Account fromAccount = accounts.get(random.nextInt(accounts.size()));
-            Account toAccount = accounts.get(random.nextInt(accounts.size()));
-            if (checkAccountData(fromAccount, toAccount, sum)) {
-                transaction(fromAccount, toAccount, sum);
-            }
+        Random random = new Random();
+        Long sum = generateRandom.getSum(MAX_SUM);
+        Account fromAccount = accounts.get(random.nextInt(accounts.size()));
+        Account toAccount = accounts.get(random.nextInt(accounts.size()));
+        if (checkAccountData(fromAccount, toAccount, sum)) {
+            transaction(fromAccount, toAccount, sum);
         }
     }
 
@@ -67,7 +65,7 @@ public class MoneyTransfer implements Runnable {
                     try {
                         if (toAccount.getLock().tryLock()) {
                             try {
-                                if (quantityTransactions.get() < MAX_TRANSACTIONS) {
+                                if (quantityTransactions.get() < ManageAccounts.MAX_TRANSACTIONS) {
                                     transfer(fromAccount, toAccount, sum);
                                     notSucsessfull = false;
                                 } else {
@@ -87,7 +85,7 @@ public class MoneyTransfer implements Runnable {
                     try {
                         if (fromAccount.getLock().tryLock()) {
                             try {
-                                if (quantityTransactions.get() < MAX_TRANSACTIONS) {
+                                if (quantityTransactions.get() < ManageAccounts.MAX_TRANSACTIONS) {
                                     transfer(fromAccount, toAccount, sum);
                                     notSucsessfull = false;
                                 } else {
