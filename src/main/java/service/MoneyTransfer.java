@@ -1,9 +1,10 @@
 package service;
 
 import accounts.Account;
-import dao.DAO;
 import exceptions.AccountsAreEqualsException;
 import exceptions.NotEnoughBalanceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import utilities.GenerateRandom;
 
 import java.util.List;
@@ -16,6 +17,7 @@ public class MoneyTransfer implements Runnable {
     private final Long MAX_SUM = 10000000L;
     private GenerateRandom generateRandom = new GenerateRandom();
     private List<Account> accounts;
+    private final Logger logger = LoggerFactory.getLogger(MoneyTransfer.class);
 
     public MoneyTransfer(List<Account> accounts) {
         this.accounts = accounts;
@@ -42,16 +44,18 @@ public class MoneyTransfer implements Runnable {
                 } else try {
                     throw new AccountsAreEqualsException();
                 } catch (AccountsAreEqualsException e) {
-                    System.err.println(String.format("%s Accounts from & to are equals. Account ID: %s", Thread.currentThread().getName(), fromAccount.getId()));
+                    logger.warn(String.format("%s Accounts from & to are equals. Account ID: %s", Thread.currentThread().getName(), fromAccount.getId()));
                 }
             } else try {
                 throw new NotEnoughBalanceException();
             } catch (NotEnoughBalanceException e) {
-                System.err.println(String.format("%s Account ID: %s Name: %s not enough sum trunsaction %s have sum %s",
+                logger.warn(String.format("%s Account ID: %s Name: %s not enough sum trunsaction %s have sum %s",
                         Thread.currentThread().getName(), fromAccount.getId(), fromAccount.getAccountName(), sum,
                         fromAccount.getBalance()));
             }
         }
+        logger.debug(String.format("Start method checkAccountData with params: fromAccount %s toAccount %s sum %s",
+                fromAccount, toAccount, sum));
         return result;
     }
 
@@ -100,6 +104,8 @@ public class MoneyTransfer implements Runnable {
                 }
             }
         }
+        logger.info(String.format("Transaction complete with params: fromAccount %s toAccount %s sum %s",
+                fromAccount, toAccount, sum));
     }
 
     private void transfer(Account fromAccount, Account toAccount, Long sum) {

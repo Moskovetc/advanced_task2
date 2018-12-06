@@ -1,6 +1,8 @@
 package dao;
 
 import accounts.Account;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -8,8 +10,9 @@ import java.util.Arrays;
 import java.util.List;
 
 public class DAO implements IDataAccessObject {
-    private final String path = "src/main/resources/";
+    private final String path = "src/main/resources/accounts/";
     private final String PATH_PREFIX = "account";
+    private final Logger logger = LoggerFactory.getLogger(DAO.class);
 
     public Account get(String accountName) {
         try {
@@ -17,15 +20,16 @@ public class DAO implements IDataAccessObject {
             ObjectInputStream objectIn = new ObjectInputStream(fileIn);
             Account account = (Account) objectIn.readObject();
             objectIn.close();
+            logger.debug(String.format("Started method get with account name: %s geted: %s", accountName, account));
             return account;
         } catch (FileNotFoundException e) {
-            System.err.println("Account not found");
+            logger.warn(String.format("Account %s not found", accountName));
             return null;
         } catch (IOException e) {
-            System.err.println("Account locked");
+            logger.error(String.format("Account %s locked by another process. File was opened in another program", accountName));
             return null;
         } catch (ClassNotFoundException e) {
-            System.err.println("File is not contain an Account");
+            logger.error(String.format("File %s is not contain an Account", accountName));
             return null;
         }
     }
@@ -37,10 +41,11 @@ public class DAO implements IDataAccessObject {
             ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
             objectOut.writeObject(account);
             objectOut.close();
+            logger.debug(String.format("Started method set with account name: %s seted: %s", accountName, account));
         } catch (FileNotFoundException e) {
-            System.err.println("File not found");
+            logger.error(String.format("File %s not found", accountName));
         } catch (IOException e) {
-            System.err.println("Account locked");
+            logger.error(String.format("Account %s locked by another process. File was opened in another program", accountName));
         }
 
     }
@@ -54,6 +59,7 @@ public class DAO implements IDataAccessObject {
                 accountNames.addAll(Arrays.asList(folder.list()));
             }
         }
+        logger.debug(String.format("Started method getAccountNames, account names geted: %s", accountNames));
         return accountNames;
     }
 
@@ -62,6 +68,7 @@ public class DAO implements IDataAccessObject {
         for(String accountName : getAccountNames()) {
             accounts.add(get(accountName));
         }
+        logger.debug(String.format("Started method getAccounts, accounts geted: %s", accounts));
         return accounts;
     }
 
