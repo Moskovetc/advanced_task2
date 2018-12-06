@@ -46,7 +46,8 @@ public class MoneyTransfer implements Runnable {
                 } else try {
                     throw new AccountsAreEqualsException();
                 } catch (AccountsAreEqualsException e) {
-                    logger.warn(String.format("%s Accounts from & to are equals. Account ID: %s", Thread.currentThread().getName(), fromAccount.getId()));
+                    logger.warn(String.format("%s Accounts from & to are equals. Account ID: %s",
+                            Thread.currentThread().getName(), fromAccount.getId()));
                 }
             } else try {
                 throw new NotEnoughBalanceException();
