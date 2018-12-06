@@ -12,15 +12,15 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MoneyTransfer implements Runnable {
-    private static AtomicInteger quantityTransactions;
+    private AtomicInteger quantityTransactions;
     private final Long MAX_SUM = 10000000L;
     private GenerateRandom generateRandom = new GenerateRandom();
     private List<Account> accounts;
-    private final Logger logger = LoggerFactory.getLogger(MoneyTransfer.class);
+    private static final Logger logger = LoggerFactory.getLogger(MoneyTransfer.class);
 
     public MoneyTransfer(List<Account> accounts, AtomicInteger quantityTransactions) {
         this.accounts = accounts;
-        MoneyTransfer.quantityTransactions = quantityTransactions;
+        this.quantityTransactions = quantityTransactions;
     }
 
     public void run() {

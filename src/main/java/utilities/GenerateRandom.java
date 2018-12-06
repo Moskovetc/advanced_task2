@@ -14,7 +14,7 @@ public class GenerateRandom {
     private final Long MAX_ID = 10000L;
     private final Long MAX_BALANCE = 10000000L;
     Random random = new Random();
-    private final Logger logger = LoggerFactory.getLogger(GenerateRandom.class);
+    private static final Logger logger = LoggerFactory.getLogger(GenerateRandom.class);
 
     public Account getAccount() {
         Account account = new Account();

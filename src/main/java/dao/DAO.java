@@ -12,7 +12,7 @@ import java.util.List;
 public class DAO implements IDataAccessObject {
     private final String path = "src/main/resources/accounts/";
     private final String PATH_PREFIX = "account";
-    private final Logger logger = LoggerFactory.getLogger(DAO.class);
+    private static final Logger logger = LoggerFactory.getLogger(DAO.class);
 
     public Account get(String accountName) {
         try {

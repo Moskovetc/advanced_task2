@@ -10,14 +10,14 @@ public class Transaction {
     private Account fromAccount;
     private Account toAccount;
     private Long sum;
-    private static AtomicInteger quantityTransactions;
-    private final Logger logger = LoggerFactory.getLogger(Transaction.class);
+    private AtomicInteger quantityTransactions;
+    private static final Logger logger = LoggerFactory.getLogger(Transaction.class);
 
     public Transaction(Account fromAccount, Account toAccount, Long sum, AtomicInteger quantityTransactions) {
         this.fromAccount = fromAccount;
         this.toAccount = toAccount;
         this.sum = sum;
-        Transaction.quantityTransactions = quantityTransactions;
+        this.quantityTransactions = quantityTransactions;
     }
 
     public boolean complete() {
