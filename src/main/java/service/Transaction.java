@@ -34,37 +34,19 @@ public class Transaction {
     public boolean complete() {
         boolean sucsessfull = false;
         while (!sucsessfull) {
-            if (fromAccount.getId() < toAccount.getId()) {
-                if (fromAccount.getLock().tryLock()) {
-                    try {
-                        if (toAccount.getLock().tryLock()) {
-                            try {
-                                randomSleep(MIN_TIME_TO_SLEEP, RANDOM_TIME_TO_SLEEP);
-                                transfer(fromAccount, toAccount, sum);
-                                sucsessfull = true;
-                            } finally {
-                                toAccount.getLock().unlock();
-                            }
+            if (fromAccount.getLock().tryLock()) {
+                try {
+                    if (toAccount.getLock().tryLock()) {
+                        try {
+                            randomSleep();
+                            transfer(fromAccount, toAccount, sum);
+                            sucsessfull = true;
+                        } finally {
+                            toAccount.getLock().unlock();
                         }
-                    } finally {
-                        fromAccount.getLock().unlock();
                     }
-                }
-            } else {
-                if (toAccount.getLock().tryLock()) {
-                    try {
-                        if (fromAccount.getLock().tryLock()) {
-                            try {
-                                randomSleep(MIN_TIME_TO_SLEEP, RANDOM_TIME_TO_SLEEP);
-                                transfer(fromAccount, toAccount, sum);
-                                sucsessfull = true;
-                            } finally {
-                                toAccount.getLock().unlock();
-                            }
-                        }
-                    } finally {
-                        fromAccount.getLock().unlock();
-                    }
+                } finally {
+                    fromAccount.getLock().unlock();
                 }
             }
         }
@@ -78,10 +60,10 @@ public class Transaction {
         toAccount.setBalance(toAccount.getBalance() + sum);
     }
 
-    private void randomSleep(int minTimeToSleep, int randomTimeToSleep) {
-        if (0 < minTimeToSleep && 0 < randomTimeToSleep) {
+    private void randomSleep() {
+        if (0 < Transaction.MIN_TIME_TO_SLEEP && 0 < Transaction.RANDOM_TIME_TO_SLEEP) {
             try {
-                Thread.sleep(minTimeToSleep + random.nextInt(randomTimeToSleep));
+                Thread.sleep(Transaction.MIN_TIME_TO_SLEEP + random.nextInt(Transaction.RANDOM_TIME_TO_SLEEP));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
