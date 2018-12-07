@@ -42,4 +42,8 @@ public class GenerateRandom {
         logger.debug(String.format("Started method getSum"));
         return randomLong(sum);
     }
+
+    public int sleepTimer(int minTimeForSleep, int randomTimeSleep){
+        return minTimeForSleep + random.nextInt(randomTimeSleep);
+    }
 }

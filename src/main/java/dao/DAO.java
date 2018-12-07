@@ -26,7 +26,8 @@ public class DAO implements IDataAccessObject {
             logger.warn(String.format("Account %s not found", accountName));
             return null;
         } catch (IOException e) {
-            logger.error(String.format("Account %s locked by another process. File was opened in another program", accountName));
+            logger.error(String.format("Account %s locked by another process. File was opened in another program",
+                    accountName));
             return null;
         } catch (ClassNotFoundException e) {
             logger.error(String.format("File %s is not contain an Account", accountName));
@@ -45,14 +46,15 @@ public class DAO implements IDataAccessObject {
         } catch (FileNotFoundException e) {
             logger.error(String.format("File %s not found", accountName));
         } catch (IOException e) {
-            logger.error(String.format("Account %s locked by another process. File was opened in another program", accountName));
+            logger.error(String.format("Account %s locked by another process. File was opened in another program",
+                    accountName));
         }
 
     }
 
     public List<String> getAccountNames() {
         File folder = new File(path);
-        List<String> accountNames = new ArrayList<String>();
+        List<String> accountNames = new ArrayList<>();
 
         if (folder.isDirectory()) {
             if (null != folder.list()) {
@@ -64,7 +66,7 @@ public class DAO implements IDataAccessObject {
     }
 
     public List<Account> getAccounts() {
-        List<Account> accounts = new ArrayList<Account>();
+        List<Account> accounts = new ArrayList<>();
         for(String accountName : getAccountNames()) {
             accounts.add(get(accountName));
         }
@@ -75,8 +77,8 @@ public class DAO implements IDataAccessObject {
     public void deleteAll() {
         File folder = new File(path);
         if (folder.isDirectory()) {
-            if (null != folder.list()) {
-                List<String> files = Arrays.asList(folder.list());
+            String[] files = folder.list();
+            if (null != files) {
                 for (String file : files) {
                     File myFile = new File(folder, file);
                     myFile.delete();

@@ -18,7 +18,6 @@ public class ManageAccounts {
     private IDataAccessObject dao = new DAO();
     private static final int MAX_ACCOUNTS = 10;
     private static final int MAX_THREADS = 20;
-    private static final int MAX_TRANSACTIONS = 1000;
     private static final Logger logger = LoggerFactory.getLogger(ManageAccounts.class);
 
     private void createAccounts() {
@@ -53,8 +52,9 @@ public class ManageAccounts {
 
     private float getTransactionPerSecond(Duration duration) {
         logger.info(String.format("Started method getTransactionPerSecond " +
-                "with params: Duration %s (sec), MAX_Transactions: %s", duration.getSeconds(), MAX_TRANSACTIONS));
-        return (float) duration.getSeconds() / (long) MAX_TRANSACTIONS;
+                "with params: Duration %s (sec), MAX_Transactions: %s",
+                duration.getSeconds(), MoneyTransfer.MAX_TRANSACTIONS));
+        return (float) duration.getSeconds() / (long) MoneyTransfer.MAX_TRANSACTIONS;
     }
 
 }

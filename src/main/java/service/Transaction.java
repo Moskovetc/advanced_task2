@@ -4,38 +4,41 @@ import accounts.Account;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 public class Transaction {
     private Account fromAccount;
     private Account toAccount;
     private Long sum;
-    private static AtomicInteger quantityTransactions;
-    private static final int MAX_TRANSACTIONS = 1000;
+    private int sleepTimer;
+
+    @Override
+    public String toString() {
+        return "Transaction{" +
+                "fromAccount=" + fromAccount +
+                ", toAccount=" + toAccount +
+                ", sum=" + sum +
+                '}';
+    }
+
     private static final Logger logger = LoggerFactory.getLogger(Transaction.class);
 
-    public Transaction(Account fromAccount, Account toAccount, Long sum, AtomicInteger quantityTransactions) {
+    public Transaction(Account fromAccount, Account toAccount, Long sum, int sleepTimer) {
         this.fromAccount = fromAccount;
         this.toAccount = toAccount;
         this.sum = sum;
-        this.quantityTransactions = quantityTransactions;
+        this.sleepTimer = sleepTimer;
     }
 
-    public void complete() {
-        boolean notSucsessfull = true;
-        while (notSucsessfull) {
+    public boolean complete() {
+        boolean sucsessfull = false;
+        while (!sucsessfull) {
             if (fromAccount.getId() < toAccount.getId()) {
                 if (fromAccount.getLock().tryLock()) {
                     try {
                         if (toAccount.getLock().tryLock()) {
                             try {
-                                if (quantityTransactions.get() < MAX_TRANSACTIONS) {
-                                    transfer(fromAccount, toAccount, sum);
-                                    notSucsessfull = false;
-                                } else {
-                                    notSucsessfull = false;
-                                }
-                                quantityTransactions.incrementAndGet();
+                                sleep(sleepTimer);
+                                transfer(fromAccount, toAccount, sum);
+                                sucsessfull = true;
                             } finally {
                                 toAccount.getLock().unlock();
                             }
@@ -49,13 +52,9 @@ public class Transaction {
                     try {
                         if (fromAccount.getLock().tryLock()) {
                             try {
-                                if (quantityTransactions.get() < MAX_TRANSACTIONS) {
-                                    transfer(fromAccount, toAccount, sum);
-                                    notSucsessfull = false;
-                                } else {
-                                    notSucsessfull = false;
-                                }
-                                quantityTransactions.incrementAndGet();
+                                sleep(sleepTimer);
+                                transfer(fromAccount, toAccount, sum);
+                                sucsessfull = true;
                             } finally {
                                 toAccount.getLock().unlock();
                             }
@@ -68,10 +67,19 @@ public class Transaction {
         }
         logger.info(String.format("Transaction complete with params: fromAccount %s toAccount %s sum %s",
                 fromAccount, toAccount, sum));
+        return sucsessfull;
     }
 
     private void transfer(Account fromAccount, Account toAccount, Long sum) {
         fromAccount.setBalance(fromAccount.getBalance() - sum);
         toAccount.setBalance(toAccount.getBalance() + sum);
+    }
+
+    private void sleep(int sleepTimer) {
+        try {
+            Thread.sleep(sleepTimer);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
