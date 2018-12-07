@@ -37,22 +37,23 @@ public class ManageAccounts {
     }
 
     public void start() {
-        LocalDateTime transactionsStartAt;
         deleteAccounts();
         createAccounts();
         ExecutorService service = Executors.newFixedThreadPool(20);
-                transactionsStartAt = LocalDateTime.now();
+        LocalDateTime transactionsStartAt = LocalDateTime.now();
         for (int i = 1; i < MAX_THREADS; i++) {
             service.submit(new MoneyTransfer(dao.getAccounts()));
         }
         service.shutdown();
-        logger.info(String.format("Transactions per second %s",
-                getTransactionPerSecond(Duration.between(transactionsStartAt, LocalDateTime.now()))));
+        LocalDateTime transactionsEndtAt = LocalDateTime.now();
+        logger.info(String.format("Transactions per second %s. Started at: %s Ended at: %s",
+                getTransactionPerSecond(Duration.between(transactionsStartAt, transactionsEndtAt)), transactionsStartAt,
+                transactionsEndtAt));
     }
 
     private float getTransactionPerSecond(Duration duration) {
         logger.info(String.format("Started method getTransactionPerSecond " +
-                "with params: Duration %s (sec), MAX_Transactions: %s",
+                        "with params: Duration %s (sec), MAX_Transactions: %s",
                 duration.getSeconds(), MoneyTransfer.MAX_TRANSACTIONS));
         return (float) duration.getSeconds() / (long) MoneyTransfer.MAX_TRANSACTIONS;
     }

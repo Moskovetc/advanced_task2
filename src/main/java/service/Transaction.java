@@ -4,11 +4,15 @@ import accounts.Account;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Random;
+
 public class Transaction {
     private Account fromAccount;
     private Account toAccount;
     private Long sum;
-    private int sleepTimer;
+    private Random random = new Random();
+    private static final int MIN_TIME_TO_SLEEP = 500;
+    private static final int RANDOM_TIME_TO_SLEEP = 500;
 
     @Override
     public String toString() {
@@ -21,11 +25,10 @@ public class Transaction {
 
     private static final Logger logger = LoggerFactory.getLogger(Transaction.class);
 
-    public Transaction(Account fromAccount, Account toAccount, Long sum, int sleepTimer) {
+    public Transaction(Account fromAccount, Account toAccount, Long sum) {
         this.fromAccount = fromAccount;
         this.toAccount = toAccount;
         this.sum = sum;
-        this.sleepTimer = sleepTimer;
     }
 
     public boolean complete() {
@@ -36,7 +39,7 @@ public class Transaction {
                     try {
                         if (toAccount.getLock().tryLock()) {
                             try {
-                                sleep(sleepTimer);
+                                randomSleep(MIN_TIME_TO_SLEEP, RANDOM_TIME_TO_SLEEP);
                                 transfer(fromAccount, toAccount, sum);
                                 sucsessfull = true;
                             } finally {
@@ -52,7 +55,7 @@ public class Transaction {
                     try {
                         if (fromAccount.getLock().tryLock()) {
                             try {
-                                sleep(sleepTimer);
+                                randomSleep(MIN_TIME_TO_SLEEP, RANDOM_TIME_TO_SLEEP);
                                 transfer(fromAccount, toAccount, sum);
                                 sucsessfull = true;
                             } finally {
@@ -75,11 +78,13 @@ public class Transaction {
         toAccount.setBalance(toAccount.getBalance() + sum);
     }
 
-    private void sleep(int sleepTimer) {
-        try {
-            Thread.sleep(sleepTimer);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+    private void randomSleep(int minTimeToSleep, int randomTimeToSleep) {
+        if (0 < minTimeToSleep && 0 < randomTimeToSleep) {
+            try {
+                Thread.sleep(minTimeToSleep + random.nextInt(randomTimeToSleep));
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
