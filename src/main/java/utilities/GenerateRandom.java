@@ -43,7 +43,7 @@ public class GenerateRandom {
         return randomLong(sum);
     }
 
-    public int sleepTimer(int minTimeForSleep, int randomTimeSleep){
+    public int sleepTimer(int minTimeForSleep, int randomTimeSleep) {
         return minTimeForSleep + random.nextInt(randomTimeSleep);
     }
 }

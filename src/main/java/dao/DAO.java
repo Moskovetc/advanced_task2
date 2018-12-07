@@ -67,7 +67,7 @@ public class DAO implements IDataAccessObject {
 
     public List<Account> getAccounts() {
         List<Account> accounts = new ArrayList<>();
-        for(String accountName : getAccountNames()) {
+        for (String accountName : getAccountNames()) {
             accounts.add(get(accountName));
         }
         logger.debug(String.format("Started method getAccounts, accounts geted: %s", accounts));

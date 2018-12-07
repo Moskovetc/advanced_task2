@@ -65,9 +65,9 @@ public class ManageAccounts {
         return (float) duration.getSeconds() / (long) MoneyTransfer.MAX_TRANSACTIONS;
     }
 
-    private Long calculateTotalSum(List<Account> accounts){
+    private Long calculateTotalSum(List<Account> accounts) {
         Long sum = 0L;
-        for (Account account : accounts){
+        for (Account account : accounts) {
             sum += account.getBalance();
         }
         return sum;

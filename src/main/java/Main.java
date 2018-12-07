@@ -4,6 +4,7 @@ import service.ManageAccounts;
 
 public class Main {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
+
     public static void main(String[] args) {
         logger.info("main started");
         ManageAccounts manager = new ManageAccounts();
